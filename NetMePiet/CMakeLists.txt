@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 
 
-set(TARGET_NAME CPixelPusher)
+set(TARGET_NAME NetMePiet)
 
 project(${TARGET_NAME} CXX C)
 
@@ -31,6 +31,18 @@ find_package(SDL2 CONFIG REQUIRED)
 find_package(sdl2-net CONFIG REQUIRED)
 
 find_package(unofficial-concurrentqueue CONFIG REQUIRED)
+
+
+#===== ===== SDL2 hack ===== =====
+set_property(TARGET SDL2::SDL2 PROPERTY IMPORTED_GLOBAL True)
+add_library(SDL2 ALIAS SDL2::SDL2)
+
+set_property(TARGET SDL2::SDL2main PROPERTY IMPORTED_GLOBAL True)
+add_library(SDL2main ALIAS SDL2::SDL2main)
+
+set_property(TARGET SDL2::SDL2_net PROPERTY IMPORTED_GLOBAL True)
+add_library(SDL2_net ALIAS SDL2::SDL2_net)
+#===== ===== end SDL2 hack ===== =====
 
 target_link_libraries(${TARGET_NAME} PRIVATE
 	SDL2
