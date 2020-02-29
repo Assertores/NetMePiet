@@ -1,0 +1,3 @@
+[submodule "NetMePiet/external/concurrentqueue"]
+	path = NetMePiet/external/concurrentqueue
+	url = https://github.com/cameron314/concurrentqueue
