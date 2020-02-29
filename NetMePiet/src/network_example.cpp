@@ -35,13 +35,13 @@ namespace NMP::Network {
 		element.message = "Hello World!";
 
 		uint8_t buffer[1024];
-		size_t packageSize = element.Deserialize(buffer, 1024);
+		size_t packageSize = element.Serialize(buffer, 1024);
 
 		//socket.Send(buffer, packageSize);
 
 		//socket.Read(buffer, 1024);
 
-		Messages::Base* m = Messages::Base::Serialize(buffer, 1024);
+		Messages::Base* m = Messages::Base::Deserialize(buffer, 1024);
 
 		ReactToMessage(m);
 

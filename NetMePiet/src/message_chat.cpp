@@ -7,7 +7,7 @@
 
 using namespace NMP::Network::Messages;
 
-size_t Chat::DataDeserialize(const uint8_t buffer[], const size_t maxSize) {
+size_t Chat::DataSerialize(const uint8_t buffer[], const size_t maxSize) const{
 	if(buffer == nullptr) {
 		return 0;
 	}
@@ -26,7 +26,7 @@ size_t Chat::DataDeserialize(const uint8_t buffer[], const size_t maxSize) {
 	return payloadSize;
 }
 
-void Chat::DataSerialize(const uint8_t msg[], const size_t length) {
+void Chat::DataDeserialize(const uint8_t msg[], const size_t length) {
 	if(msg == nullptr) {
 		return;
 	}

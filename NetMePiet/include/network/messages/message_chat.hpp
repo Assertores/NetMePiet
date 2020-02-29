@@ -16,7 +16,7 @@ namespace NMP::Network::Messages {
 		std::string message;
 
 	protected:
-		size_t DataDeserialize(const uint8_t buffer[], const size_t maxSize) override;
-		void DataSerialize(const uint8_t msg[], const size_t length) override;
+		size_t DataSerialize(const uint8_t buffer[], const size_t maxSize) const override;
+		void DataDeserialize(const uint8_t msg[], const size_t length) override;
 	};
 } // NMP::Network::Messages
