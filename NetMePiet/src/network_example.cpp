@@ -2,13 +2,34 @@
 
 //===== ===== EXTERN ===== =====
 #include <cstdint>
+#include <iostream>
 
 //===== ===== INTERN ===== =====
 #include "network/messages/message_base.hpp"
 #include "network/messages/message_chat.hpp"
 
 namespace NMP::Network {
-	void Example() {
+	inline void ReactToMessage(Messages::Base* m) {
+		switch(m->GetMessageType()) {
+		case Messages::MessageTypes::heart_beat:
+			break;
+		case Messages::MessageTypes::chat:
+		{
+			Messages::Chat* cm = (NMP::Network::Messages::Chat*)m;
+			std::cout << cm->senderName << ": " << cm->message << std::endl;
+			break;
+		}
+		default:
+			break;
+		}
+
+		if(m != nullptr) {
+			delete(m);
+			m = nullptr;
+		}
+	}
+
+	inline void Example() {
 		Messages::Chat element;
 		element.senderName = "Andreas";
 		element.message = "Hello World!";
@@ -22,17 +43,8 @@ namespace NMP::Network {
 
 		Messages::Base* m = Messages::Base::Serialize(buffer, 1024);
 
-		switch(m->GetMessageType()) {
-		case Messages::MessageTypes::heart_beat:
-			break;
-		case Messages::MessageTypes::chat:
-		{
-			Messages::Chat* cm = (NMP::Network::Messages::Chat*)m;
-			//std::cout << cm->senderName << ": " << cm->message << std::endl;
-			break;
-		}
-		default:
-			break;
-		}
+		ReactToMessage(m);
+
+		ReactToMessage(nullptr);
 	}
 } // NMP::Network

@@ -16,11 +16,15 @@ namespace NMP::Network::Messages {
 	public:
 
 		inline const MessageTypes GetMessageType(void) {
+			if(this == nullptr) {
+				return heart_beat;
+			}
+
 			return _type;
 		}
 
 		size_t Deserialize(uint8_t buffer[], const size_t maxSize);
-		static Base* Serialize(const uint8_t msg[], const size_t maxSize);
+		static Base* Serialize(const uint8_t msg[], const size_t length);
 
 	protected:
 		virtual size_t DataDeserialize(const uint8_t buffer[], const size_t maxSize) = 0;
