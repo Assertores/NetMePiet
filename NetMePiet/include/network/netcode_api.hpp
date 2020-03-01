@@ -43,5 +43,5 @@ namespace NMP::Network {
 	 * @remarks			if nullptr server socket will be used
 	 * @return			if the message has been send
 	 */
-	bool SendMessage(Messages::Base *message, TCPsocket socket = nullptr);
+	void SendMessage(Messages::Base *message);
 } // NMP::Network

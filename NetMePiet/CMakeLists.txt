@@ -51,8 +51,12 @@ target_compile_features(NMP_messages PUBLIC cxx_std_17)
 
 add_library(NMP_networkAPI
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/network/netcode_api.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/network/netcode_helper.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/network/netcode_threads.hpp"
 
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/netcode_api.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/netcode_helper.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/netcode_threads.cpp"
 )
 
 target_include_directories(NMP_networkAPI
@@ -60,7 +64,7 @@ PUBLIC
 	"${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
-target_link_libraries(NMP_networkAPI PRIVATE
+target_link_libraries(NMP_networkAPI
 	SDL2
 	SDL2_net
 	concurrentqueue
