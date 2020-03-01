@@ -13,6 +13,7 @@ find_package(sdl2-net CONFIG REQUIRED)
 
 include("external/concurrentqueue.cmake")
 
+add_subdirectory("external/glad_debug")
 
 #===== ===== SDL2 hack ===== =====
 set_property(TARGET SDL2::SDL2 PROPERTY IMPORTED_GLOBAL True)
