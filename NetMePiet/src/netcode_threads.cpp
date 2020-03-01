@@ -19,7 +19,9 @@ namespace NMP::Network {
 		std::set<TCPsocket> peers;
 		peers.insert(tcpsock);
 
-		std::thread relay = std::thread(Relay, running, outgoingMessages, &peers);
+		std::thread relay = std::thread([&]() {
+			Relay(running, outgoingMessages, &peers);
+		});
 
 		uint8_t buffer[1024];
 
@@ -48,7 +50,9 @@ namespace NMP::Network {
 		// enqueued by another thread
 		OutQueue incomingClientNetworkMessages;
 
-		std::thread relay = std::thread(Relay, running, incomingClientNetworkMessages);
+		std::thread relay = std::thread([&]() {
+			Relay(running, incomingClientNetworkMessages);
+		});
 
 		while(running) {
 			TCPsocket new_tcpsock = SDLNet_TCP_Accept(tcpsock);
@@ -58,7 +62,12 @@ namespace NMP::Network {
 				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			} else {
 				printf("ne connection");
-				clientConnections.push_back(std::pair(new_tcpsock, std::thread(HandleConnection, running, new_tcpsock, incomingClientNetworkMessages)));
+				clientConnections.push_back(std::pair(
+					new_tcpsock,
+					std::thread([&]() {
+						HandleConnection(running, new_tcpsock, incomingClientNetworkMessages);
+					})
+				));
 			}
 		}
 
