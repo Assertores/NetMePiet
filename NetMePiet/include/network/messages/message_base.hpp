@@ -3,6 +3,7 @@
 //===== ===== EXTERN ===== =====
 #include <cstddef>
 #include <cstdint>
+#include <sstream>
 
 //===== ===== INTERN ===== =====
 
@@ -47,6 +48,8 @@ namespace NMP::Network::Messages {
 		 * @remarks			kan be nullptr if it is eather heart_beat or unknown
 		 */
 		static Base* Deserialize(uint8_t msg[], const size_t length);
+
+		virtual std::string ToString(void) = 0;
 
 	protected:
 		/*!

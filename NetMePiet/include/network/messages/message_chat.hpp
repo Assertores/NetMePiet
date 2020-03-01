@@ -11,6 +11,7 @@ namespace NMP::Network::Messages {
 	class Chat final : public Base {
 	public:
 		Chat() { _type = chat; _vorwardCompatible = 0; _backwardCompatible = 0; };
+		std::string ToString(void) override;
 
 		uint32_t _clientID;
 		std::string _message;

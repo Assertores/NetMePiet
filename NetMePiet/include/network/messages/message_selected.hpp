@@ -11,6 +11,7 @@ namespace NMP::Network::Messages {
 	class Selected final : public Base {
 	public:
 		Selected() { _type = selected; _vorwardCompatible = 0; _backwardCompatible = 0; };
+		std::string ToString(void) override;
 
 		uint32_t _clientID;
 		uint32_t _x;

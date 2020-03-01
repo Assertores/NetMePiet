@@ -11,6 +11,7 @@ namespace NMP::Network::Messages {
 	class Pixel final : public Base {
 	public:
 		Pixel() { _type = pixel; _vorwardCompatible = 0; _backwardCompatible = 0; };
+		std::string ToString(void) override;
 
 		uint32_t _time;
 		uint32_t _x;

@@ -42,4 +42,12 @@ namespace NMP::Network::Messages {
 		_message = std::string((char*)msg);
 		msg += _message.size() + 1;
 	}
+
+	std::string Chat::ToString(void) {
+		std::stringstream ss;
+
+		ss << "Chat     | " << _clientID << ": " << _message;
+
+		return ss.str();
+	}
 } // NMP::Network::Messages

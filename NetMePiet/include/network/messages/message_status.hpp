@@ -16,6 +16,7 @@ namespace NMP::Network::Messages {
 	class Status final : public Base {
 	public:
 		Status() { _type = status; _vorwardCompatible = 0; _backwardCompatible = 0; };
+		std::string ToString(void) override;
 
 		uint32_t _clientID;
 		clientStatus _status;

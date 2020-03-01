@@ -43,4 +43,12 @@ namespace NMP::Network::Messages {
 		_hight = *((uint32_t*)msg);
 		msg += sizeof(uint32_t);
 	}
+
+	std::string Size::ToString(void) {
+		std::stringstream ss;
+
+		ss << "Size     | " << "t=" << _time << ": (" << _width << " | " << _hight << ")";
+
+		return ss.str();
+	}
 }

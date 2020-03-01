@@ -48,4 +48,23 @@ namespace NMP::Network::Messages {
 			msg += _name.size() + 1;
 		}
 	}
+
+	std::string Status::ToString(void) {
+		std::stringstream ss;
+
+		ss << "Status   | " << _clientID << ": ";
+
+		switch(_status) {
+		case NMP::Network::Messages::Connected:
+			ss << "Connected, name=" << _name;
+			break;
+		case NMP::Network::Messages::Disconnected:
+			ss << "Disconnected";
+			break;
+		default:
+			break;
+		}
+
+		return ss.str();
+	}
 }

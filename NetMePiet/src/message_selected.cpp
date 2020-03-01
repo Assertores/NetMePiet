@@ -43,4 +43,12 @@ namespace NMP::Network::Messages {
 		_y = *((uint32_t*)msg);
 		msg += sizeof(uint32_t);
 	}
+
+	std::string Selected::ToString(void) {
+		std::stringstream ss;
+
+		ss << "Selected | " << _clientID << ": (" << _x << " | " << _y << ")";
+
+		return ss.str();
+	}
 }

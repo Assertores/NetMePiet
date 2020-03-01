@@ -67,4 +67,12 @@ namespace NMP::Network::Messages {
 		_a = msg[0];
 		msg++;
 	}
+
+	std::string Pixel::ToString(void) {
+		std::stringstream ss;
+
+		ss << "Pixel    | " << "t=" << _time << " (" << _x << " | " << _y << "): " << "r=" << _r << " g=" << _g << " b=" << _b << " a=" << _a;
+
+		return ss.str();
+	}
 }
