@@ -2,6 +2,7 @@
 
 //===== ===== EXTERN ===== =====
 #include <iostream>
+#include <cstring>
 
 //===== ===== INTERN ===== =====
 

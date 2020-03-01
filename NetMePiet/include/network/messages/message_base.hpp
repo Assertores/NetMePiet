@@ -1,6 +1,7 @@
 #pragma once
 
 //===== ===== EXTERN ===== =====
+#include <cstddef>
 #include <cstdint>
 
 //===== ===== INTERN ===== =====
@@ -22,7 +23,7 @@ namespace NMP::Network::Messages {
 		/*!
 		 * @return	the type of the message
 		 */
-		inline const MessageTypes GetMessageType(void) const {
+		inline MessageTypes GetMessageType(void) const {
 			if(this == nullptr) {
 				return heart_beat;
 			}
