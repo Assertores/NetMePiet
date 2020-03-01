@@ -18,7 +18,7 @@ namespace NMP::Network {
 	InQueue incomingNetworkMessages {};
 	OutQueue outMessages;
 
-	volatile bool running = false;
+	static bool running = false;
 	std::thread listenThread;
 
 	int InitServer(uint16_t port/* = 0000*/) {
@@ -36,7 +36,10 @@ namespace NMP::Network {
 		ip.port = port;
 
 		running = true;
-		listenThread = std::thread(ServerAcceptNewConnections, running, ip);
+		//listenThread = std::thread(ServerAcceptNewConnections, running, ip);
+		listenThread = std::thread([ip]() {
+			ServerAcceptNewConnections(running, ip);
+		});
 
 		return 0;
 	}
@@ -63,7 +66,10 @@ namespace NMP::Network {
 		}
 
 		running = true;
-		listenThread = std::thread(ClientConnection, running, ip, incomingNetworkMessages, outMessages);
+		//listenThread = std::thread(ClientConnection, running, ip, incomingNetworkMessages, outMessages);
+		listenThread = std::thread([ip]() {
+			ClientConnection(running, ip, incomingNetworkMessages, outMessages);
+		});
 
 		return 0;
 	}
