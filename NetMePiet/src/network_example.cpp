@@ -16,7 +16,7 @@ namespace NMP::Network {
 		case Messages::MessageTypes::chat:
 		{
 			Messages::Chat* cm = (NMP::Network::Messages::Chat*)m;
-			std::cout << cm->senderName << ": " << cm->message << std::endl;
+			std::cout << cm->_clientID << ": " << cm->message << std::endl;
 			break;
 		}
 		default:
@@ -31,7 +31,7 @@ namespace NMP::Network {
 
 	inline void Example() {
 		Messages::Chat element;
-		element.senderName = "Andreas";
+		element._clientID = 1;
 		element.message = "Hello World!";
 
 		uint8_t buffer[1024];
