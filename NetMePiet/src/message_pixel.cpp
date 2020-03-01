@@ -26,6 +26,18 @@ namespace NMP::Network::Messages {
 		*((uint32_t*)buffer) = _y;
 		buffer += sizeof(uint32_t);
 
+		buffer[0] = _r;
+		buffer++;
+
+		buffer[0] = _g;
+		buffer++;
+
+		buffer[0] = _b;
+		buffer++;
+
+		buffer[0] = _a;
+		buffer++;
+
 		return payloadSize;
 	}
 
@@ -42,5 +54,17 @@ namespace NMP::Network::Messages {
 
 		_y = *((uint32_t*)msg);
 		msg += sizeof(uint32_t);
+
+		_r = msg[0];
+		msg++;
+
+		_g = msg[0];
+		msg++;
+
+		_b = msg[0];
+		msg++;
+
+		_a = msg[0];
+		msg++;
 	}
 }

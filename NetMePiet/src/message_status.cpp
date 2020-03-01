@@ -20,11 +20,13 @@ namespace NMP::Network::Messages {
 		*((uint32_t*)buffer) = _clientID;
 		buffer += sizeof(uint32_t);
 
-		memcpy((void*)buffer, _name.data(), _name.size() + 1);
-		buffer += _name.size() + 1;
-
 		buffer[0] = _status;
 		buffer++;
+
+		if(status == Connected) {
+			memcpy((void*)buffer, _name.data(), _name.size() + 1);
+			buffer += _name.size() + 1;
+		}
 
 		return payloadSize;
 	}
@@ -37,10 +39,12 @@ namespace NMP::Network::Messages {
 		_clientID = *((uint32_t*)msg);
 		msg += sizeof(uint32_t);
 
-		_name = std::string((char*)msg);
-		msg += _name.size() + 1;
-
 		_status = (clientStatus)msg[0];
 		msg++;
+
+		if(_status == Connected) {
+			_name = std::string((char*)msg);
+			msg += _name.size() + 1;
+		}
 	}
 }

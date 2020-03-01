@@ -12,7 +12,7 @@ namespace NMP::Network::Messages {
 			return 0;
 		}
 
-		size_t payloadSize = sizeof(uint32_t) + message.size() + 1; //null character
+		size_t payloadSize = sizeof(uint32_t) + _message.size() + 1; //null character
 		if(maxSize < payloadSize) {
 			return 0;
 		}
@@ -20,8 +20,8 @@ namespace NMP::Network::Messages {
 		*((uint32_t*)buffer) = _clientID;
 		buffer += sizeof(uint32_t);
 
-		memcpy((void*)buffer, message.data(), message.size() + 1);
-		buffer += message.size() + 1;
+		memcpy((void*)buffer, _message.data(), _message.size() + 1);
+		buffer += _message.size() + 1;
 
 		return payloadSize;
 	}
@@ -38,7 +38,7 @@ namespace NMP::Network::Messages {
 			return;
 		}
 
-		message = std::string((char*)msg);
-		msg += message.size() + 1;
+		_message = std::string((char*)msg);
+		msg += _message.size() + 1;
 	}
 } // NMP::Network::Messages

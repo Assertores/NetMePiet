@@ -13,7 +13,7 @@ namespace NMP::Network::Messages {
 		Chat() { _type = chat; _vorwardCompatible = 0; _backwardCompatible = 0; };
 
 		uint32_t _clientID;
-		std::string message;
+		std::string _message;
 
 	protected:
 		size_t DataSerialize(uint8_t buffer[], const size_t maxSize) const override;

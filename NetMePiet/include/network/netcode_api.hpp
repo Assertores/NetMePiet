@@ -16,19 +16,19 @@ namespace NMP::Network {
 	 * @remarks	enqueued by another thread
 	 *			the one who dequeues it must delete it
 	 */
-	moodycamel::ConcurrentQueue<Messages::Base*> incomingNetworkMessages;
+	extern moodycamel::ConcurrentQueue<Messages::Base*> incomingNetworkMessages;
 
 	/*!
 	 * @brief	initialices the server
 	 * @remars	creates threads
 	 */
-	int InitServer(void);
+	int InitServer(uint16_t port = 0000);
 
 	/*!
 	 * @brief	initialices the client
 	 * @remars	creates threads
 	 */
-	int InitClient(void);
+	int InitClient(std::string hostURL = "", uint16_t port = 0000);
 
 	/*!
 	 * @brief	closes threads

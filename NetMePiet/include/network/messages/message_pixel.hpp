@@ -15,6 +15,11 @@ namespace NMP::Network::Messages {
 		uint32_t _time;
 		uint32_t _x;
 		uint32_t _y;
+		uint8_t _r;
+		uint8_t _g;
+		uint8_t _b;
+		uint8_t _a;
+
 
 	protected:
 		size_t DataSerialize(uint8_t buffer[], const size_t maxSize) const override;

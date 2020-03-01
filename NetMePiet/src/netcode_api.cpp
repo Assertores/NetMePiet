@@ -3,6 +3,7 @@
 //===== ===== EXTERN ===== =====
 #include <thread>
 #include <vector>
+#include <set>
 
 //===== ===== INTERN ===== =====
 #include "network/messages/message_base.hpp"
@@ -11,6 +12,8 @@
 #define STANDARD_PORT 13370
 
 namespace NMP::Network {
+
+	moodycamel::ConcurrentQueue<Messages::Base*> incomingNetworkMessages {};
 
 	bool running = false;
 	std::thread listenThread;
@@ -81,58 +84,83 @@ namespace NMP::Network {
 		}
 	}
 
+	//clients have to send at least one package befor they can listen. so everyone who listens has to report himself to the network
+	void Relay(moodycamel::ConcurrentQueue<std::pair<TCPsocket, Messages::Base*>>* incomingClientNetworkMessages) {
+		std::set<TCPsocket> clients;
+
+		while(running) {
+			std::pair<TCPsocket, Messages::Base*> message;
+			while(incomingClientNetworkMessages->try_dequeue(message)) {
+				if(message.second == nullptr) {
+					continue;
+				}
+
+				for(auto it = clients.begin(); it != clients.end();) {
+					if(*it == message.first) {
+						continue;
+					}
+
+					if(!SendMessage(message.second, *it)) {
+						it = clients.erase(it);
+					} else {
+						it++;
+					}
+				}
+				delete(message.second);
+
+				if(message.first == nullptr) {
+					continue;
+				}
+
+				clients.insert(message.first);
+			}
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		}
+	}
+
 	void ServerAcceptNewConnections(void) {
 		std::vector<std::pair<TCPsocket, std::thread>> clientConnections;
 
 		// enqueued by another thread
 		moodycamel::ConcurrentQueue<std::pair<TCPsocket, Messages::Base*>> incomingClientNetworkMessages;
 
+		std::thread relay = std::thread(Relay, &incomingClientNetworkMessages);
+
 		while(running) {
 			TCPsocket new_tcpsock = SDLNet_TCP_Accept(tcpsock);
 			if(!new_tcpsock) {
-				//!!!!! WARNING Life-lock !!!!!
-				printf("SDLNet_TCP_Accept: %s\n", SDLNet_GetError());
-
-				//relay messages
-				std::pair<TCPsocket, Messages::Base*> message;
-				while(incomingClientNetworkMessages.try_dequeue(message)) {
-					if(message.second == nullptr) {
-						continue;
-					}
-
-					for(auto it = clientConnections.begin(); it != clientConnections.end();){
-						if(it->first == message.first) {
-							continue;
-						}
-
-						if(!SendMessage(message.second, it->first)) {
-							it = clientConnections.erase(it);
-						} else {
-							it++;
-						}
-					}
-
-					delete(message.second);
-				}
+				//printf("SDLNet_TCP_Accept: %s\n", SDLNet_GetError());
 
 				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			} else {
+				printf("ne connection");
 				clientConnections.push_back(std::pair(new_tcpsock, std::thread(HandleConnection, new_tcpsock, &incomingClientNetworkMessages)));
 			}
 		}
+
+		relay.join();
 
 		for(size_t i = 0, size = clientConnections.size(); i < size; i++) {
 			clientConnections[i].second.join();
 		}
 	}
 
-	int InitServer(void) {
+	int InitServer(uint16_t port/* = 0000*/) {
 		int retVal = Init();
 		if(retVal != 0) {
 			return retVal;
 		}
 
-		tcpsock = SDLNet_TCP_Open(INADDR_ANY);
+		if(port == 0000) {
+			port = STANDARD_PORT;
+		}
+
+		IPaddress ip;
+		ip.host = INADDR_ANY;
+		ip.port = port;
+
+		tcpsock = SDLNet_TCP_Open(&ip);
 
 		running = true;
 		listenThread = std::thread(ServerAcceptNewConnections);
@@ -140,16 +168,23 @@ namespace NMP::Network {
 		return 0;
 	}
 
-	int InitClient(void) {
+	int InitClient(std::string hostURL/* = ""*/, uint16_t port/* = 0000*/) {
 		int retVal = Init();
 		if(retVal != 0) {
 			return retVal;
 		}
 
+		if(hostURL == "") {
+			hostURL = STANDARD_URL;
+		}
+		if(port == 0000) {
+			port = STANDARD_PORT;
+		}
+
 		IPaddress ip;
 
 		//connect
-		if(SDLNet_ResolveHost(&ip, STANDARD_URL, STANDARD_PORT) == -1) {
+		if(SDLNet_ResolveHost(&ip, hostURL.c_str(), port) == -1) {
 			printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 			return 1;
 		}

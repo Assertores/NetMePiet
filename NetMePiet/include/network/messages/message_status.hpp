@@ -18,8 +18,8 @@ namespace NMP::Network::Messages {
 		Status() { _type = status; _vorwardCompatible = 0; _backwardCompatible = 0; };
 
 		uint32_t _clientID;
-		std::string _name;
 		clientStatus _status;
+		std::string _name;
 
 	protected:
 		size_t DataSerialize(uint8_t buffer[], const size_t maxSize) const override;
