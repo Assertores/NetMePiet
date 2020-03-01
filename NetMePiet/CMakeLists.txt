@@ -15,10 +15,18 @@ target_sources(${TARGET_NAME}
 PUBLIC
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/network/messages/message_base.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/network/messages/message_chat.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/network/messages/message_pixel.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/network/messages/message_selected.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/network/messages/message_size.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/network/messages/message_status.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/network/netcode_api.hpp"
 PRIVATE
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/message_base.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/message_chat.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/message_pixel.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/message_selected.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/message_size.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/message_status.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/netcode_api.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/network_example.cpp"
 )
