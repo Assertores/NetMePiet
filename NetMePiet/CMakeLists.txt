@@ -19,7 +19,8 @@ endif()
 
 include("external/concurrentqueue.cmake")
 
-add_subdirectory("external/glad_debug")
+add_subdirectory("external/glad_debug") # TODO: use normal glad for non debug
+add_subdirectory("external/imgui")
 
 if (NOT UNIX)
 	#===== ===== SDL2 hack ===== =====

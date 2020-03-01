@@ -1,3 +1,6 @@
 [submodule "NetMePiet/external/concurrentqueue"]
 	path = NetMePiet/external/concurrentqueue
 	url = https://github.com/cameron314/concurrentqueue
+[submodule "NetMePiet/external/imgui/imgui"]
+	path = NetMePiet/external/imgui/imgui
+	url = https://github.com/ocornut/imgui.git
