@@ -132,3 +132,24 @@ target_link_libraries(${TARGET_NAME} PRIVATE
 
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_17)
 
+add_executable(NetMePiet_Server
+	"src/server_main.cpp"
+)
+
+target_include_directories(NetMePiet_Server
+PUBLIC
+	"${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
+target_link_libraries(NetMePiet_Server PRIVATE
+	SDL2
+	SDL2main
+	SDL2_net
+	concurrentqueue
+
+	NMP_messages
+	NMP_networkAPI
+)
+
+target_compile_features(NetMePiet_Server PUBLIC cxx_std_17)
+
