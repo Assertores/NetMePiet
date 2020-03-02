@@ -14,7 +14,10 @@ namespace NMP::Network::Messages {
 		buffer[0] = this->GetMessageType();
 		buffer[1] = this->_vorwardCompatible;
 		buffer[2] = this->_backwardCompatible;
-		size_t payloadSize = this->DataSerialize(buffer + 3, maxSize - 3);
+		buffer += 3;
+		*((uint32_t*)buffer) = _lobbyID;
+		buffer += sizeof(uint32_t);
+		size_t payloadSize = this->DataSerialize(buffer, maxSize - 3 - sizeof(uint32_t));
 
 		return payloadSize;
 	}
@@ -36,11 +39,13 @@ namespace NMP::Network::Messages {
 				//TODO: error not compatible
 				return nullptr;
 			} else {
+				m->_lobbyID = *((uint32_t*)(msg + 3));
+
 				for(uint8_t i = msg[2]; i < m->_backwardCompatible; i++) {
-					m->UpdateVersion(msg + 3, i);
+					m->UpdateVersion(msg + 3 + sizeof(uint32_t), i);
 				}
 
-				m->DataDeserialize(msg + 3, length - 3);
+				m->DataDeserialize(msg + 3 + sizeof(uint32_t), length - 3 - sizeof(uint32_t));
 			}
 		}
 
