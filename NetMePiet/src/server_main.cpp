@@ -33,8 +33,8 @@
 "syntax: \"help [command]\"       | prints the help to the [command]\n"\
 "\"help\", \"h\"                    | prints this help\n"\
 "\"exit\", \"e\", \"quit\", \"q\"       | quits the programm\n"\
-"\"dequeue\", \"d\"                   | dequeues the commands\n"\
-"\"clear\", \"c\"                     | clers the console\n"\
+"\"dequeue\", \"d\"                 | dequeues the commands\n"\
+"\"clear\", \"c\"                   | clers the console\n"\
 
 #define COM_NOT_FOUND		"command not found type \"help\" for more informations."
 #define NOT_ENOUGH_PARAMETER	"not enough parameter"
