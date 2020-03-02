@@ -17,7 +17,7 @@ namespace NMP::Network {
 
 	void ServerAcceptNewConnections(volatile bool& running, IPaddress ip);
 
-	void Relay(volatile bool& running, OutQueue& incomingClientNetworkMessages, std::set<TCPsocket>* startPeers = nullptr);
+	void Relay(volatile bool& running, OutQueue& incomingClientNetworkMessages, int count = 0, ...);
 
 	void HandleConnection(volatile bool& running, TCPsocket socket, OutQueue& queue);
 

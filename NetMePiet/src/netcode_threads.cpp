@@ -2,7 +2,8 @@
 
 //===== ===== EXTERN ===== =====
 #include <vector>
-#include <set>
+#include <map>
+#include <stdarg.h>
 
 //===== ===== INTERN ===== =====
 #include "network/netcode_helper.hpp"
@@ -16,11 +17,8 @@ namespace NMP::Network {
 			return;
 		}
 
-		std::set<TCPsocket> peers;
-		peers.insert(tcpsock);
-
 		std::thread relay = std::thread([&]() {
-			Relay(running, outgoingMessages, &peers);
+			Relay(running, outgoingMessages, 1, tcpsock);
 		});
 
 		uint8_t buffer[1024];
@@ -92,11 +90,17 @@ namespace NMP::Network {
 		}
 	}
 
-	void Relay(volatile bool& running, OutQueue& incomingClientNetworkMessages, std::set<TCPsocket>* startPeers/* = nullptr*/) {
-		std::set<TCPsocket> clients;
-		if(startPeers != nullptr) {
-			clients.merge(*startPeers);
+	void Relay(volatile bool& running, OutQueue& incomingClientNetworkMessages, int count, ...) {
+		std::map<TCPsocket, int> clients;
+
+		va_list valist;
+		va_start(valist, count);
+
+		for(int i = 0; i < count; i++) {
+			clients[va_arg(valist, TCPsocket)] = 0;
 		}
+
+		va_end(valist);
 
 		while(running) {
 			std::pair<TCPsocket, Messages::Base*> message;
@@ -106,11 +110,14 @@ namespace NMP::Network {
 				}
 
 				for(auto it = clients.begin(); it != clients.end();) {
-					if(*it == message.first) {
+					if((*it).first == message.first) {
+						continue;
+					}
+					if(!((*it).second == 0 || (*it).second == message.second->_lobbyID)) {
 						continue;
 					}
 
-					if(!DoSendMessage(message.second, *it)) {
+					if(!DoSendMessage(message.second, (*it).first)) {
 						it = clients.erase(it);
 					} else {
 						it++;
@@ -122,7 +129,7 @@ namespace NMP::Network {
 					continue;
 				}
 
-				clients.insert(message.first);
+				clients[message.first] = message.second->_lobbyID;
 			}
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
