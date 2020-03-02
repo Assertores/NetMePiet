@@ -10,7 +10,7 @@
 
 namespace NMP::Network {
 
-	void ClientConnection(volatile bool& running, IPaddress ip, InQueue& incomingNetworkMessages, OutQueue& outgoingMessages) {
+	void ClientConnection(volatile bool& running, IPaddress ip, volatile bool& promiscuous, volatile uint32_t& lobbyID, InQueue& incomingNetworkMessages, OutQueue& outgoingMessages) {
 		TCPsocket tcpsock = SDLNet_TCP_Open(&ip);
 		if(!tcpsock) {
 			printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
@@ -27,7 +27,9 @@ namespace NMP::Network {
 			Messages::Base* m = WaitForMessageComplete(tcpsock, buffer, 1024);
 
 			if(m != nullptr) {
-				incomingNetworkMessages.enqueue(m);
+				if(promiscuous || m->_lobbyID == lobbyID) {
+					incomingNetworkMessages.enqueue(m);
+				}
 			} else {
 				return;
 			}

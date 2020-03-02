@@ -19,6 +19,8 @@ namespace NMP::Network {
 	OutQueue outMessages;
 
 	static bool running = false;
+	bool promiscuous = false;
+	uint32_t currentLobbyID = 0;
 	std::thread listenThread;
 
 	int InitServer(uint16_t port/* = 0000*/) {
@@ -26,6 +28,8 @@ namespace NMP::Network {
 		if(retVal != 0) {
 			return retVal;
 		}
+
+		SetPromiscuousMode(true);
 
 		if(port == 0000) {
 			port = STANDARD_PORT;
@@ -68,10 +72,18 @@ namespace NMP::Network {
 		running = true;
 		//listenThread = std::thread(ClientConnection, running, ip, incomingNetworkMessages, outMessages);
 		listenThread = std::thread([ip]() {
-			ClientConnection(running, ip, incomingNetworkMessages, outMessages);
+			ClientConnection(running, ip, promiscuous, currentLobbyID, incomingNetworkMessages, outMessages);
 		});
 
 		return 0;
+	}
+
+	void SetLobbyID(uint32_t newLobbyID) {
+		currentLobbyID = newLobbyID;
+	}
+
+	void SetPromiscuousMode(bool mode) {
+		promiscuous = mode;
 	}
 
 	void ShutDown(void) {

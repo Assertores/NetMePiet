@@ -13,7 +13,7 @@ namespace NMP::Network {
 	using InQueue = moodycamel::ConcurrentQueue<Messages::Base*>;
 	using OutQueue = moodycamel::ConcurrentQueue<std::pair<TCPsocket, Messages::Base*>>;
 
-	void ClientConnection(volatile bool& running, IPaddress ip, InQueue& incomingNetworkMessages, OutQueue& outgoingMessages);
+	void ClientConnection(volatile bool& running, IPaddress ip, volatile bool& promiscuous, volatile uint32_t& lobbyID, InQueue& incomingNetworkMessages, OutQueue& outgoingMessages);
 
 	void ServerAcceptNewConnections(volatile bool& running, IPaddress ip);
 

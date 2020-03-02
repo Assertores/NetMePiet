@@ -10,6 +10,8 @@
 namespace NMP::Network {
 
 	extern moodycamel::ConcurrentQueue<Messages::Base*> incomingNetworkMessages;
+	extern bool promiscuous;
+	extern uint32_t currentLobbyID;
 
 	int Init() {
 		if(SDL_Init(0) == -1) {
@@ -67,7 +69,9 @@ namespace NMP::Network {
 			return false;
 		}
 
-		incomingNetworkMessages.enqueue(message);
+		if(promiscuous || message->_lobbyID == currentLobbyID) {
+			incomingNetworkMessages.enqueue(message);
+		}
 
 		return true;
 	}

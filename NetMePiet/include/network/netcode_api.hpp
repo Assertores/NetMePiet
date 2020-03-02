@@ -19,16 +19,23 @@ namespace NMP::Network {
 	extern moodycamel::ConcurrentQueue<Messages::Base*> incomingNetworkMessages;
 
 	/*!
-	 * @brief	initialices the server
-	 * @remars	creates threads
+	 * @brief		initialices the server
+	 * @param port	the listen port of the server
+	 * @remars		creates threads
 	 */
 	int InitServer(uint16_t port = 0000);
 
 	/*!
-	 * @brief	initialices the client
-	 * @remars	creates threads
+	 * @brief			initialices the client
+	 * @param hostURL	the url to the host/relay server
+	 * @param port		the port, the server lisents at
+	 * @remars			creates threads
 	 */
 	int InitClient(std::string hostURL = "", uint16_t port = 0000);
+
+	void SetLobbyID(uint32_t newLobbyID);
+
+	void SetPromiscuousMode(bool mode);
 
 	/*!
 	 * @brief	closes threads
@@ -37,11 +44,8 @@ namespace NMP::Network {
 	void ShutDown(void);
 
 	/*!
-	 * @brief			sends \link message \endlink to \link socket \endlink
+	 * @brief			sends \link message \endlink
 	 * @param message	the message to send
-	 * @param socket	the socket to send it through
-	 * @remarks			if nullptr server socket will be used
-	 * @return			if the message has been send
 	 */
 	void SendMessage(Messages::Base *message);
 } // NMP::Network
