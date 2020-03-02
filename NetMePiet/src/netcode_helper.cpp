@@ -4,14 +4,15 @@
 #include <SDL.h>
 #include <SDL_net.h>
 #include <concurrentqueue.h>
+#include <atomic>
 
 //===== ===== INTERN ===== =====
 
 namespace NMP::Network {
 
 	extern moodycamel::ConcurrentQueue<Messages::Base*> incomingNetworkMessages;
-	extern bool promiscuous;
-	extern uint32_t currentLobbyID;
+	extern std::atomic_bool promiscuous;
+	extern std::atomic_int32_t currentLobbyID;
 
 	int Init() {
 		if(SDL_Init(0) == -1) {
