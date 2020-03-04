@@ -10,7 +10,7 @@
 
 namespace NMP::Network {
 
-	void ClientConnection(volatile std::atomic_bool& running, IPaddress ip, volatile std::atomic_bool& promiscuous, volatile std::atomic_int32_t& lobbyID, InQueue& incomingNetworkMessages, OutQueue& outgoingMessages) {
+	void ClientConnection(IPaddress ip, Context* context) {
 		TCPsocket tcpsock = SDLNet_TCP_Open(&ip);
 		if(!tcpsock) {
 			printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
@@ -18,17 +18,17 @@ namespace NMP::Network {
 		}
 
 		std::thread relay = std::thread([&]() {
-			Relay(running, outgoingMessages, 1, tcpsock);
+			Relay(context, 1, tcpsock);
 		});
 
 		uint8_t buffer[1024];
 
-		while(running) {
+		while(context->running) {
 			Messages::Base* m = WaitForMessageComplete(tcpsock, buffer, 1024);
 
 			if(m != nullptr) {
-				if(promiscuous || m->_lobbyID == lobbyID) {
-					incomingNetworkMessages.enqueue(m);
+				if(context->promiscuous || m->_lobbyID == context->currentLobbyID) {
+					context->incomingNetworkMessages.enqueue(m);
 				}
 			} else {
 				return;
@@ -38,7 +38,7 @@ namespace NMP::Network {
 		relay.join();
 	}
 
-	void ServerAcceptNewConnections(volatile std::atomic_bool& running, IPaddress ip) {
+	void ServerAcceptNewConnections(IPaddress ip, Context* context) {
 		TCPsocket tcpsock = SDLNet_TCP_Open(&ip);
 		if(!tcpsock) {
 			printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
@@ -47,14 +47,11 @@ namespace NMP::Network {
 
 		std::vector<std::pair<TCPsocket, std::thread>> clientConnections;
 
-		// enqueued by another thread
-		OutQueue incomingClientNetworkMessages;
-
 		std::thread relay = std::thread([&]() {
-			Relay(running, incomingClientNetworkMessages);
+			Relay(context);
 		});
 
-		while(running) {
+		while(context->running) {
 			TCPsocket new_tcpsock = SDLNet_TCP_Accept(tcpsock);
 			if(!new_tcpsock) {
 				//printf("SDLNet_TCP_Accept: %s\n", SDLNet_GetError());
@@ -65,7 +62,7 @@ namespace NMP::Network {
 				clientConnections.push_back(std::pair(
 					new_tcpsock,
 					std::thread([&]() {
-						HandleConnection(running, new_tcpsock, incomingClientNetworkMessages);
+						HandleConnection(&context->running, new_tcpsock, &context->outMessages);
 					})
 				));
 			}
@@ -78,21 +75,21 @@ namespace NMP::Network {
 		}
 	}
 
-	void HandleConnection(volatile std::atomic_bool& running, TCPsocket socket, OutQueue& queue) {
+	void HandleConnection(volatile std::atomic_bool* running, TCPsocket socket, OutQueue* queue) {
 		uint8_t buffer[1024];
 
-		while(running) {
+		while(*running) {
 			Messages::Base* m = WaitForMessageComplete(socket, buffer, 1024);
 
 			if(m != nullptr) {
-				queue.enqueue(std::pair(socket, m));
+				queue->enqueue(std::pair(socket, m));
 			} else {
 				return;
 			}
 		}
 	}
 
-	void Relay(volatile std::atomic_bool& running, OutQueue& incomingClientNetworkMessages, int count, ...) {
+	void Relay(Context* context, int count/* = 0*/, ...) {
 		std::map<TCPsocket, int> clients;
 
 		va_list valist;
@@ -104,9 +101,9 @@ namespace NMP::Network {
 
 		va_end(valist);
 
-		while(running) {
+		while(context->running) {
 			std::pair<TCPsocket, Messages::Base*> message;
-			while(incomingClientNetworkMessages.try_dequeue(message)) {
+			while(context->outMessages.try_dequeue(message)) {
 				if(message.second == nullptr) {
 					continue;
 				}
@@ -119,7 +116,7 @@ namespace NMP::Network {
 						continue;
 					}
 
-					if(!DoSendMessage(message.second, (*it).first)) {
+					if(!DoSendMessage(message.second, (*it).first, context)) {
 						it = clients.erase(it);
 					} else {
 						it++;

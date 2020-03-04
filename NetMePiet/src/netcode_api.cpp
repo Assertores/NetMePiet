@@ -16,21 +16,23 @@
 
 namespace NMP::Network {
 
-	InQueue incomingNetworkMessages {};
-	OutQueue outMessages;
+	static Context globalContext = Context();
 
-	static std::atomic_bool running = false;
-	std::atomic_bool promiscuous = false;
-	std::atomic_int32_t currentLobbyID = 0;
-	std::thread listenThread;
+	InQueue& GetInQueue() {
+		return globalContext.incomingNetworkMessages;
+	}
 
-	int InitServer(uint16_t port/* = 0000*/) {
+	int InitServer(uint16_t port/* = 0000*/, Context* context/* = nullptr*/) {
+		if(context == nullptr) {
+			context = &globalContext;
+		}
+
 		int retVal = Init();
 		if(retVal != 0) {
 			return retVal;
 		}
 
-		SetPromiscuousMode(true);
+		SetPromiscuousMode(true, context);
 
 		if(port == 0000) {
 			port = STANDARD_PORT;
@@ -40,16 +42,20 @@ namespace NMP::Network {
 		ip.host = INADDR_ANY;
 		ip.port = port;
 
-		running = true;
+		context->running = true;
 		//listenThread = std::thread(ServerAcceptNewConnections, running, ip);
-		listenThread = std::thread([ip]() {
-			ServerAcceptNewConnections(running, ip);
+		context->listenThread = std::thread([&, ip]() {
+			ServerAcceptNewConnections(ip, context);
 		});
 
 		return 0;
 	}
 
-	int InitClient(std::string hostURL/* = ""*/, uint16_t port/* = 0000*/) {
+	int InitClient(std::string hostURL/* = ""*/, uint16_t port/* = 0000*/, Context* context/* = nullptr*/) {
+		if(context == nullptr) {
+			context = &globalContext;
+		}
+
 		int retVal = Init();
 		if(retVal != 0) {
 			return retVal;
@@ -70,39 +76,55 @@ namespace NMP::Network {
 			return 1;
 		}
 
-		running = true;
+		context->running = true;
 		//listenThread = std::thread(ClientConnection, running, ip, incomingNetworkMessages, outMessages);
-		listenThread = std::thread([ip]() {
-			ClientConnection(running, ip, promiscuous, currentLobbyID, incomingNetworkMessages, outMessages);
+		context->listenThread = std::thread([&, ip]() {
+			ClientConnection(ip, context);
 		});
 
 		return 0;
 	}
 
-	void SetLobbyID(uint32_t newLobbyID) {
-		currentLobbyID = newLobbyID;
+	void SetLobbyID(uint32_t newLobbyID, Context* context/* = nullptr*/) {
+		if(context == nullptr) {
+			context = &globalContext;
+		}
+
+		context->currentLobbyID = newLobbyID;
 	}
 
-	void SetPromiscuousMode(bool mode) {
-		promiscuous = mode;
+	void SetPromiscuousMode(bool mode, Context* context/* = nullptr*/) {
+		if(context == nullptr) {
+			context = &globalContext;
+		}
+
+		context->promiscuous = mode;
 	}
 
-	void ShutDown(void) {
-		if(!running) {
+	void ShutDown(Context* context/* = nullptr*/) {
+		if(!CHOOSE_CONTEXT(running)) {
 			return;
 		}
 
-		SDLNet_Quit();
+		CHOOSE_CONTEXT(running) = false;
+		CHOOSE_CONTEXT(listenThread).join();
 
-		running = false;
-		listenThread.join();
+		if(context == nullptr) {
+			SDLNet_Quit();
+		}
 	}
 
-	void SendMessage(Messages::Base* message) {
+	void SendMessage(Messages::Base* message, Context* context/* = nullptr*/) {
+		if(context == nullptr) {
+			context = &globalContext;
+		}
+
 		if(message == nullptr) {
 			return;
 		}
 
-		outMessages.enqueue(std::pair(nullptr, message));
+		message->_lobbyID = context->currentLobbyID;
+
+		context->outMessages.enqueue(std::pair(nullptr, message));
 	}
 } // NMP::Network

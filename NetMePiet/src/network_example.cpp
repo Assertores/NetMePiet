@@ -110,7 +110,9 @@ namespace NMP::Network {
 		{
 			std::map<uint32_t, std::string> names;
 			Messages::Base* m;
-			while(incomingNetworkMessages.try_dequeue(m)) {
+
+			InQueue& q = NMP::Network::GetInQueue();
+			while(q.try_dequeue(m)) {
 				if(m == nullptr) {
 					continue;
 				}
@@ -207,7 +209,9 @@ namespace NMP::Network {
 		{
 			std::map<uint32_t, std::string> names;
 			Messages::Base* m;
-			while(incomingNetworkMessages.try_dequeue(m)) {
+
+			InQueue& q = NMP::Network::GetInQueue();
+			while(q.try_dequeue(m)) {
 				if(m == nullptr) {
 					continue;
 				}

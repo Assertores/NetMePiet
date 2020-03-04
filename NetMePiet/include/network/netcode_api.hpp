@@ -4,6 +4,9 @@
 #include <concurrentqueue.h>
 #include <SDL_net.h>
 
+//===== ===== INTERN ===== =====
+#include "netcode_types.hpp"
+
 
 namespace NMP::Network {
 
@@ -16,14 +19,14 @@ namespace NMP::Network {
 	 * @remarks	enqueued by another thread
 	 *			the one who dequeues it must delete it
 	 */
-	extern moodycamel::ConcurrentQueue<Messages::Base*> incomingNetworkMessages;
+	InQueue& GetInQueue();
 
 	/*!
 	 * @brief		initialices the server
 	 * @param port	the listen port of the server
 	 * @remars		creates threads
 	 */
-	int InitServer(uint16_t port = 0000);
+	int InitServer(uint16_t port = 0000, Context* context = nullptr);
 
 	/*!
 	 * @brief			initialices the client
@@ -31,21 +34,21 @@ namespace NMP::Network {
 	 * @param port		the port, the server lisents at
 	 * @remars			creates threads
 	 */
-	int InitClient(std::string hostURL = "", uint16_t port = 0000);
+	int InitClient(std::string hostURL = "", uint16_t port = 0000, Context* context = nullptr);
 
-	void SetLobbyID(uint32_t newLobbyID);
+	void SetLobbyID(uint32_t newLobbyID, Context* context = nullptr);
 
-	void SetPromiscuousMode(bool mode);
+	void SetPromiscuousMode(bool mode, Context* context = nullptr);
 
 	/*!
 	 * @brief	closes threads
 	 * @remars	blocks until all threads a joind
 	 */
-	void ShutDown(void);
+	void ShutDown(Context* context = nullptr);
 
 	/*!
 	 * @brief			sends \link message \endlink
-	 * @param message	the message to send
+	 * @param message	the message to send, must be created with new
 	 */
-	void SendMessage(Messages::Base *message);
+	void SendMessage(Messages::Base *message, Context* context = nullptr);
 } // NMP::Network

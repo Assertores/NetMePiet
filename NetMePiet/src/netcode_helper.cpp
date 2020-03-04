@@ -10,10 +10,6 @@
 
 namespace NMP::Network {
 
-	extern moodycamel::ConcurrentQueue<Messages::Base*> incomingNetworkMessages;
-	extern std::atomic_bool promiscuous;
-	extern std::atomic_int32_t currentLobbyID;
-
 	int Init() {
 		if(SDL_Init(0) == -1) {
 			printf("SDL_Init: %s\n", SDL_GetError());
@@ -51,7 +47,7 @@ namespace NMP::Network {
 		return Messages::Base::Deserialize(buffer, packageSize);
 	}
 
-	bool DoSendMessage(Messages::Base* message, TCPsocket socket) {
+	bool DoSendMessage(Messages::Base* message, TCPsocket socket, Context* context/* = nullptr*/) {
 		if(message == nullptr) {
 			return true;
 		}
@@ -70,8 +66,8 @@ namespace NMP::Network {
 			return false;
 		}
 
-		if(promiscuous || message->_lobbyID == currentLobbyID) {
-			incomingNetworkMessages.enqueue(message);
+		if(context->promiscuous || message->_lobbyID ==  context->currentLobbyID) {
+			context->incomingNetworkMessages.enqueue(message);
 		}
 
 		return true;

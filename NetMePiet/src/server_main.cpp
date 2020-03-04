@@ -40,7 +40,7 @@
 #define NOT_ENOUGH_PARAMETER	"not enough parameter"
 
 
-void PrintQueue(void);
+void PrintQueue(NMP::Network::Context* context = nullptr);
 
 void ClearConsole(void);
 
@@ -139,10 +139,12 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-void PrintQueue(void) {
+void PrintQueue(NMP::Network::Context* context/* = nullptr*/) {
 	bool hasDequeued = false;
 	NMP::Network::Messages::Base* m;
-	while(NMP::Network::incomingNetworkMessages.try_dequeue(m)) {
+
+	NMP::Network::InQueue& q = (context == nullptr ? NMP::Network::GetInQueue() : context->incomingNetworkMessages);
+	while(q.try_dequeue(m)) {
 		if(m == nullptr) {
 			continue;
 		}
