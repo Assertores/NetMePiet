@@ -112,6 +112,11 @@ target_link_libraries(NMP_network_test PRIVATE
 )
 
 add_executable(${TARGET_NAME}
+	"include/screens/screen.hpp"
+	"include/screens/startup_screen.hpp"
+
+	"src/startup_screen.cpp"
+
 	"src/main.cpp"
 )
 
@@ -128,6 +133,9 @@ target_link_libraries(${TARGET_NAME} PRIVATE
 
 	NMP_messages
 	NMP_networkAPI
+
+	glad
+	imgui
 )
 
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_17)

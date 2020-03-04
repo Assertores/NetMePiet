@@ -15,3 +15,8 @@ _deps
 NetMePiet/out
 NetMePiet/bin
 NetMePiet/lib
+
+.clangd/
+build/
+
+*.swp
