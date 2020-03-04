@@ -135,6 +135,7 @@ int main(int argc, char** argv) {
 
 	std::cout << "[SERVER] stops" << std::endl;
 	NMP::Network::ShutDown();
+	SDL_Quit();
 
 	return 0;
 }

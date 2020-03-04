@@ -90,7 +90,7 @@ namespace NMP::Network {
 	}
 
 	void Relay(Context* context, int count/* = 0*/, ...) {
-		std::map<TCPsocket, int> clients;
+		std::map<TCPsocket, uint32_t> clients;
 
 		va_list valist;
 		va_start(valist, count);

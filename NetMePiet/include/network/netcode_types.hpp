@@ -15,7 +15,7 @@ namespace NMP::Network {
 
 		std::atomic_bool running;
 		std::atomic_bool promiscuous;
-		std::atomic_int32_t currentLobbyID;
+		std::atomic_uint32_t currentLobbyID;
 		std::thread listenThread;
 
 		Context() {

@@ -1,5 +1,3 @@
-#pragma once
-
 //===== ===== EXTERN ===== =====
 #include <cstdint>
 #include <iostream>

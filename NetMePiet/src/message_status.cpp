@@ -24,7 +24,7 @@ namespace NMP::Network::Messages {
 		buffer[0] = _status;
 		buffer++;
 
-		if(status == Connected) {
+		if(_status == Connected) {
 			memcpy((void*)buffer, _name.data(), _name.size() + 1);
 			buffer += _name.size() + 1;
 		}

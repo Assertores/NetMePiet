@@ -51,8 +51,10 @@ namespace NMP::Network {
 		if(message == nullptr) {
 			return true;
 		}
-
 		if(socket == nullptr) {
+			return false;
+		}
+		if(context == nullptr) {
 			return false;
 		}
 

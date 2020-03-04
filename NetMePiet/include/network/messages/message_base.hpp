@@ -21,6 +21,8 @@ namespace NMP::Network::Messages {
 	class Base {
 	public:
 
+		virtual ~Base() {};
+
 		uint32_t _lobbyID;
 
 		/*!
