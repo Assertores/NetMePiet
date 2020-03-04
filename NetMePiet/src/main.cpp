@@ -1,4 +1,6 @@
-#include "SDL_video.h"
+#include <chrono>
+#include <ratio>
+
 #include <SDL.h>
 #include <glad/glad.h>
 #include <imgui/imgui.h>
@@ -78,6 +80,7 @@ int main(int argc, char* argv[]) {
 	}
 
 
+	auto last_clock = std::chrono::high_resolution_clock::now();
 	NMP::Screens::ScreenI* curr_screen = new NMP::Screens::StartupScreen(); // new
 	while (curr_screen) {
 		ImGui_ImplOpenGL3_NewFrame();
@@ -93,14 +96,15 @@ int main(int argc, char* argv[]) {
 			}
 
 			ImGui_ImplSDL2_ProcessEvent(&event);
-
-			//curr_screen->handleSDL_Event();
 		}
 		if (!curr_screen) {
 			break;
 		}
 
-		curr_screen->update(0.16f);
+		auto new_clock = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> delta = new_clock - last_clock;
+		last_clock = new_clock;
+		curr_screen->update(delta.count());
 
 		// render
 		ImGui::Render();
