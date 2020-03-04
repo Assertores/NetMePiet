@@ -56,7 +56,7 @@ namespace NMP::Network::Messages {
 
 		switch(_status) {
 		case NMP::Network::Messages::Connected:
-			ss << "Connected, name=" << _name;
+			ss << "Connected, name=" << _name << ", to lobby " << _lobbyID;
 			break;
 		case NMP::Network::Messages::Disconnected:
 			ss << "Disconnected";

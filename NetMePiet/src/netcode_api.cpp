@@ -4,6 +4,7 @@
 #include <thread>
 #include <vector>
 #include <set>
+#include <atomic>
 
 //===== ===== INTERN ===== =====
 #include "network/messages/message_base.hpp"
@@ -18,7 +19,9 @@ namespace NMP::Network {
 	InQueue incomingNetworkMessages {};
 	OutQueue outMessages;
 
-	static bool running = false;
+	static std::atomic_bool running = false;
+	std::atomic_bool promiscuous = false;
+	std::atomic_int32_t currentLobbyID = 0;
 	std::thread listenThread;
 
 	int InitServer(uint16_t port/* = 0000*/) {
@@ -26,6 +29,8 @@ namespace NMP::Network {
 		if(retVal != 0) {
 			return retVal;
 		}
+
+		SetPromiscuousMode(true);
 
 		if(port == 0000) {
 			port = STANDARD_PORT;
@@ -68,10 +73,18 @@ namespace NMP::Network {
 		running = true;
 		//listenThread = std::thread(ClientConnection, running, ip, incomingNetworkMessages, outMessages);
 		listenThread = std::thread([ip]() {
-			ClientConnection(running, ip, incomingNetworkMessages, outMessages);
+			ClientConnection(running, ip, promiscuous, currentLobbyID, incomingNetworkMessages, outMessages);
 		});
 
 		return 0;
+	}
+
+	void SetLobbyID(uint32_t newLobbyID) {
+		currentLobbyID = newLobbyID;
+	}
+
+	void SetPromiscuousMode(bool mode) {
+		promiscuous = mode;
 	}
 
 	void ShutDown(void) {

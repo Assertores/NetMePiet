@@ -10,7 +10,7 @@
 
 namespace NMP::Network::Messages {
 	enum MessageTypes : uint8_t {
-		heart_beat,
+		heart_beat = 0,
 		chat,
 		pixel,
 		selected,
@@ -20,6 +20,8 @@ namespace NMP::Network::Messages {
 
 	class Base {
 	public:
+
+		uint32_t _lobbyID;
 
 		/*!
 		 * @return	the type of the message
