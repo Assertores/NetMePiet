@@ -19,6 +19,9 @@ namespace NMP::Network {
 		std::thread listenThread;
 
 		Context() {
+			incomingNetworkMessages = InQueue();
+			outMessages = OutQueue();
+
 			running = false;
 			promiscuous = false;
 			currentLobbyID = 0;

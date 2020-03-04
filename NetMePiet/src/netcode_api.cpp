@@ -44,7 +44,7 @@ namespace NMP::Network {
 
 		context->running = true;
 		//listenThread = std::thread(ServerAcceptNewConnections, running, ip);
-		context->listenThread = std::thread([&, ip]() {
+		context->listenThread = std::thread([ip, context]() {
 			ServerAcceptNewConnections(ip, context);
 		});
 
@@ -78,7 +78,7 @@ namespace NMP::Network {
 
 		context->running = true;
 		//listenThread = std::thread(ClientConnection, running, ip, incomingNetworkMessages, outMessages);
-		context->listenThread = std::thread([&, ip]() {
+		context->listenThread = std::thread([ip, context]() {
 			ClientConnection(ip, context);
 		});
 

@@ -17,7 +17,7 @@ namespace NMP::Network {
 			return;
 		}
 
-		std::thread relay = std::thread([&]() {
+		std::thread relay = std::thread([context, tcpsock]() {
 			Relay(context, 1, tcpsock);
 		});
 
@@ -47,7 +47,7 @@ namespace NMP::Network {
 
 		std::vector<std::pair<TCPsocket, std::thread>> clientConnections;
 
-		std::thread relay = std::thread([&]() {
+		std::thread relay = std::thread([context]() {
 			Relay(context);
 		});
 
