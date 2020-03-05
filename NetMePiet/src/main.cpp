@@ -9,6 +9,7 @@
 
 #include <screens/screen.hpp>
 #include <screens/startup_screen.hpp>
+#include <screens/imgui_demo_screen.hpp>
 
 int main(int argc, char* argv[]) {
 	if (SDL_Init(SDL_INIT_EVERYTHING)) {
@@ -81,9 +82,9 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
+	NMP::Screens::ScreenI* curr_screen = new NMP::Screens::ImGuiDemoScreen(); // new
 
 	auto last_clock = std::chrono::high_resolution_clock::now();
-	NMP::Screens::ScreenI* curr_screen = new NMP::Screens::StartupScreen(); // new
 	while (curr_screen) {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(window);
