@@ -7,6 +7,7 @@
 #include <atomic>
 
 //===== ===== INTERN ===== =====
+#include "SDL_net.h"
 #include "network/messages/message_base.hpp"
 #include "network/netcode_helper.hpp"
 #include "network/netcode_threads.hpp"
@@ -40,7 +41,11 @@ namespace NMP::Network {
 
 		IPaddress ip;
 		ip.host = INADDR_ANY;
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+		ip.port = SDL_Swap16(port);
+#else
 		ip.port = port;
+#endif
 
 		context->running = true;
 		//listenThread = std::thread(ServerAcceptNewConnections, running, ip);
@@ -74,6 +79,17 @@ namespace NMP::Network {
 		if(SDLNet_ResolveHost(&ip, hostURL.c_str(), port) == -1) {
 			printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 			return 1;
+		}
+
+		{ // print address
+			uint32_t ipaddr = SDL_SwapBE32(ip.host);
+			printf("connecting to %d.%d.%d.%d:%d ...\n",
+				ipaddr >> 24,
+				ipaddr >> 16 & 0xff,
+				ipaddr >> 8 & 0xff,
+				ipaddr & 0xff,
+				SDL_SwapBE16(ip.port)
+			);
 		}
 
 		context->running = true;

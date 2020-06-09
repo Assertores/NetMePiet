@@ -1,3 +1,4 @@
+#include "network/netcode_api.hpp"
 #include <chrono>
 #include <ratio>
 
@@ -9,7 +10,7 @@
 
 #include <screens/screen.hpp>
 #include <screens/startup_screen.hpp>
-#include <screens/imgui_demo_screen.hpp>
+//#include <screens/imgui_demo_screen.hpp>
 
 int main(int argc, char* argv[]) {
 	if (SDL_Init(SDL_INIT_EVERYTHING)) {
@@ -82,7 +83,8 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	NMP::Screens::ScreenI* curr_screen = new NMP::Screens::ImGuiDemoScreen(); // new
+	//NMP::Screens::ScreenI* curr_screen = new NMP::Screens::ImGuiDemoScreen(); // new
+	NMP::Screens::ScreenI* curr_screen = new NMP::Screens::StartupScreen(); // new
 
 	auto last_clock = std::chrono::high_resolution_clock::now();
 	while (curr_screen) {
@@ -130,6 +132,10 @@ int main(int argc, char* argv[]) {
 
 	SDL_GL_DeleteContext(gl_context);
 	SDL_DestroyWindow(window);
+
+	// teardown global state and shutdown sdl_net
+	NMP::Network::ShutDown();
+
 	SDL_Quit();
 	return 0;
 }

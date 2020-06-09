@@ -114,9 +114,11 @@ target_link_libraries(NMP_network_test PRIVATE
 add_executable(${TARGET_NAME}
 	"include/screens/screen.hpp"
 	"include/screens/startup_screen.hpp"
+	"include/screens/editor_screen.hpp"
 	"include/screens/imgui_demo_screen.hpp"
 
 	"src/startup_screen.cpp"
+	"src/editor_screen.cpp"
 	"src/imgui_demo_screen.cpp"
 
 	"src/main.cpp"
